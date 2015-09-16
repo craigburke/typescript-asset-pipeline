@@ -21,8 +21,7 @@ class TypeScriptProcessor extends JavaScriptProcessor {
         String formattedInput = input.replace("'", "\\'").replaceAll("(\r)?\n", " \\\\n")
 
         javaScript {
-            eval "files['foo.ts'] = '${formattedInput}';"
-            eval "compile('foo');"
+            eval "ts.compileString('${formattedInput}');"
         }
     }
 

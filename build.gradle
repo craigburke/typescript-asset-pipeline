@@ -33,33 +33,38 @@ task('installCompilerDependencies', type: NpmTask) {
 
 task('processCompiler', dependsOn: 'installCompilerDependencies') {
     doLast {
+        String libDTs = file("${tscPath}/lib.d.ts").text
+            .replaceAll("'", "\\\\'")
+            .replaceAll("\r\n", " \\\\n")
+
+        // Copy files
         copy {
             from 'js'
             into tscPath
         }
 
-        def tsSysRegex = /(?ms)ts\.sys.*\}\)\(\);/
-        updatedTscFile.text = tscFile.text.replaceFirst(tsSysRegex, "ts.sys = require('./sys-shim');")
+        // Update sys-shim
+        File sysShim = file("${tscPath}/sys-shim.js")
+        sysShim.text = sysShim.text.replace('// Add Files', "files['lib.d.ts'] = '${libDTs}';")
+
+        String updatedJs = "ts.sys = require('./sys-shim');"
+        updatedTscFile.text = tscFile.text.replaceFirst(/(?ms)ts\.sys.*\}\)\(\);/, updatedJs)
     }
 }
 
 task('installCompiler', dependsOn: 'processCompiler', type: NodeTask) {
     script = file('node_modules/webpack/bin/webpack.js')
-    args = [updatedTscFile.path, tscDestination.path]
-    doLast {
-        String defFile = file("${tscPath}/lib.d.ts").text
+    args = [updatedTscFile.path, '--output-library', 'ts', tscDestination.path]
+    doFirst {
+        String compileFunction = """ \
+            module.exports.compileString = function(data) {
+                ts.sys.writeFile('foo.ts', data);
+                ts.executeCommandLine(['foo.ts']);
+                return ts.sys.readFile('foo.js');
+            };
+        """
 
-        defFile = defFile.replace("'", "\\'")
-        defFile = defFile.replaceAll("(\r)?\n", " \\\\n")
-
-        String compiler = """\
-            var files = {};
-            files['lib.d.ts'] = '${defFile}';
-            var compile;
-            ${tscDestination.text}"""
-
-        compiler = compiler.replace('ts.executeCommandLine(ts.sys.args);', "compile = function(fileName) { ts.executeCommandLine([fileName + '.ts']); return files[fileName + '.js']; };")
-        tscDestination.text = compiler
+        updatedTscFile.text =  updatedTscFile.text.replace('ts.executeCommandLine(ts.sys.args);', compileFunction)
     }
 }
 
