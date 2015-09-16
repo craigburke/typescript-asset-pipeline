@@ -1,0 +1,67 @@
+plugins {
+    id 'groovy'
+    id 'com.moowork.node' version '0.10'
+    id 'nebula.provided-base' version '2.2.2'
+}
+
+group = 'com.craigburke'
+version = '0.1.0'
+
+sourceCompatibility = 1.7
+
+repositories {
+    mavenLocal()
+    jcenter()
+}
+
+node {
+    download = true
+}
+
+ext {
+    npmDependencies = ['typescript', 'webpack']
+
+    tscPath = 'node_modules/typescript/lib/'
+    tscFile = file("${tscPath}/tsc.js")
+    updatedTscFile = file("${tscPath}/tsc.tmp.js")
+    tscDestination = file('src/main/resources/tsc.js')
+}
+
+task('installCompilerDependencies', type: NpmTask) {
+    args = ['install'] + npmDependencies
+}
+
+task('processCompiler', dependsOn: 'installCompilerDependencies') {
+    doLast {
+        def tsSysRegex = /(?ms)ts\.sys.*\}\)\(\);/
+        String sysShimJs = file('sys-shim.js').text
+        updatedTscFile.text = tscFile.text.replaceFirst(tsSysRegex, sysShimJs)
+    }
+}
+
+task('installCompiler', dependsOn: 'processCompiler', type: NodeTask) {
+    script = file('node_modules/webpack/bin/webpack.js')
+    args = [updatedTscFile.path, tscDestination.path]
+    doLast {
+        String defFile = file("${tscPath}/lib.d.ts").text
+
+        defFile = defFile.replace("'", "\\'")
+        defFile = defFile.replaceAll("(\r)?\n", " \\\\n")
+
+        String compiler = """\
+            var files = {};
+            files['lib.d.ts'] = '${defFile}';
+            var compile;
+            ${tscDestination.text}"""
+
+        compiler = compiler.replace('ts.executeCommandLine(ts.sys.args);', "compile = function(fileName) { ts.executeCommandLine([fileName + '.ts']); return files[fileName + '.js']; };")
+        tscDestination.text = compiler
+    }
+}
+
+dependencies {
+    provided 'com.bertramlabs.plugins:asset-pipeline-core:2.0.12'
+    compile 'com.craigburke.asset:javascript-core:0.2.1'
+    compile 'org.codehaus.groovy:groovy-all:2.4.4'
+    testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
+}
