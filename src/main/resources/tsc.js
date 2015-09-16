@@ -45,7 +45,7 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	/*! *****************************************************************************
 	Copyright (c) Microsoft Corporation. All rights reserved. 
@@ -783,35 +783,7 @@
 	/// <reference path="core.ts"/>
 	var ts;
 	(function (ts) {
-	    ts.sys = {
-	    args: [],
-	    newLine: '\n',
-	    useCaseSensitiveFileNames: false,
-	    write: function(s) {
-	        java.lang.System.out.println(s);
-	    },
-	    readFile: function(fileName) {
-	        return files[fileName];
-	    },
-	    writeFile: function(fileName, data) {
-	        files[fileName] = data;
-	    },
-	    resolvePath: function(path) {
-	        return '/foo';
-	    },
-	    fileExists: function(path) { return false; },
-	    directoryExists: function(path) { return false; },
-	    createDirectory: function(directoryName) { },
-	    getExecutingFilePath: function() {
-	        return 'foo';
-	    },
-	    getCurrentDirectory: function() {
-	        return '';
-	    },
-	    readDirectory: function() { },
-	    exit: function(exitCode) { }
-	};
-
+	    ts.sys = __webpack_require__(1);
 	})(ts || (ts = {}));
 	/// <reference path="types.ts" />
 	var ts;
@@ -30850,6 +30822,40 @@
 	    }
 	})(ts || (ts = {}));
 	compile = function(fileName) { ts.executeCommandLine([fileName + '.ts']); return files[fileName + '.js']; };
+
+
+/***/ },
+/* 1 */
+/***/ function(module, exports) {
+
+	module.exports = {
+	    args: [],
+	    newLine: '\\n',
+	    useCaseSensitiveFileNames: false,
+	    write: function(s) {
+	        java.lang.System.out.println(s);
+	    },
+	    readFile: function(fileName) {
+	        return files[fileName];
+	    },
+	    writeFile: function(fileName, data) {
+	        files[fileName] = data;
+	    },
+	    resolvePath: function(path) {
+	        return '/foo';
+	    },
+	    fileExists: function(path) { return false; },
+	    directoryExists: function(path) { return false; },
+	    createDirectory: function(directoryName) { },
+	    getExecutingFilePath: function() {
+	        return 'foo';
+	    },
+	    getCurrentDirectory: function() {
+	        return '';
+	    },
+	    readDirectory: function() { },
+	    exit: function(exitCode) { }
+	};
 
 
 /***/ }

@@ -33,9 +33,13 @@ task('installCompilerDependencies', type: NpmTask) {
 
 task('processCompiler', dependsOn: 'installCompilerDependencies') {
     doLast {
+        copy {
+            from 'js'
+            into tscPath
+        }
+
         def tsSysRegex = /(?ms)ts\.sys.*\}\)\(\);/
-        String sysShimJs = file('sys-shim.js').text
-        updatedTscFile.text = tscFile.text.replaceFirst(tsSysRegex, sysShimJs)
+        updatedTscFile.text = tscFile.text.replaceFirst(tsSysRegex, "ts.sys = require('./sys-shim');")
     }
 }
 

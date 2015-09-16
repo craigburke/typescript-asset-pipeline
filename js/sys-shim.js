@@ -1,4 +1,4 @@
-ts.sys = {
+module.exports = {
     args: [],
     newLine: '\\n',
     useCaseSensitiveFileNames: false,
