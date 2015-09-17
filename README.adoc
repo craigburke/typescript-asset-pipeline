@@ -1,4 +1,4 @@
-:version: 0.1.0
+:version: 0.1.1
 :apVersion: 2.5.0
 = TypeScript Asset-Pipeline
 
