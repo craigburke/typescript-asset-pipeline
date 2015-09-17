@@ -14,11 +14,11 @@ NOTE: This is currently a work in progress and will need more extensive testing 
 .build.gradle
 ----
 plugins {
-  id 'com.bertramlabs.asset-pipeline' version '{apVersion}'
+    id 'com.bertramlabs.asset-pipeline' version '{apVersion}'
 }
 
 dependencies {
-  assets 'com.craigburke:typescript-asset-pipeline:{version}'
+    assets 'com.craigburke:typescript-asset-pipeline:{version}'
 }
 ----
 
@@ -27,11 +27,11 @@ dependencies {
 .BuildConfig.groovy
 ----
 dependencies {
-  compile 'com.craigburke:typescript-asset-pipeline:{version}'
+    compile 'com.craigburke:typescript-asset-pipeline:{version}'
 }
 
 ----
 
 == How it Works
 
-This plugin will compile any file with a `ts` extension into corresponding JavaScript. It also supports the use of declaration files (`d.ts`).
+This plugin will compile any file with a `.ts` extension into corresponding JavaScript. It also supports the use of declaration files (`d.ts`).
