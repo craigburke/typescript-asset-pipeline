@@ -3,6 +3,7 @@ package com.craigburke.asset
 import asset.pipeline.AssetCompiler
 import asset.pipeline.AssetFile
 import asset.pipeline.AssetHelper
+import asset.pipeline.CacheManager
 import asset.pipeline.AssetPipelineConfigHolder
 import groovy.transform.Synchronized
 import org.mozilla.javascript.Context
@@ -47,6 +48,7 @@ class TypeScriptProcessor extends JavaScriptProcessor {
             if (referenceFile) {
                 references[path] = formatJavascriptAsString(referenceFile.inputStream.text)
                 references << getReferenceFiles(referenceFile, basePath ?: assetFile.path)
+                CacheManager.addCacheDependency(assetFile.path, referenceFile)
             }
         }
 
