@@ -4,7 +4,7 @@
 
 The `typescript-asset-pipeline` is an https://github.com/bertramdev/asset-pipeline-core[Asset Pipeline] module that compiles TypeScript files.
 
-NOTE: This is currently a work in progress and will need more extensive testing before a proper 1.0 release.
+NOTE: This is currently a work in progress and will need more extensive testing and better support for various compiler options before a proper 1.0 release.
 
 == Getting Started
 
@@ -35,3 +35,19 @@ dependencies {
 == How it Works
 
 This plugin will compile any file with a `.ts` extension into corresponding JavaScript. It also supports the use of declaration files (`d.ts`).
+
+== Configuration
+
+You can set additional compiler options by setting the **compileOptions** property.
+
+[source,groovy]
+.build.gradle
+----
+assets {
+    configOptions = [
+        typeScript : [
+           compileOptions: ['--experimentalDecorators']
+        ]
+    ]
+}
+----

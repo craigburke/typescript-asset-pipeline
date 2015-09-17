@@ -5,17 +5,7 @@ import spock.lang.Specification
 
 class TypeScriptProcessorSpec extends Specification {
 
-    def "compile a basic typescript file"() {
-        when:
-        String compiledJs = processor.process(input, new GenericAssetFile())
-
-        then:
-        compiledJs.contains('var Greeter')
-
-        where:
-        processor = new TypeScriptProcessor()
-
-        input = """\
+    static String fileContent = """\
         class Greeter {
             greeting: string;
             constructor(message: string) {
@@ -25,6 +15,19 @@ class TypeScriptProcessorSpec extends Specification {
                 return "Hello, " + this.greeting;
             }
         }"""
+
+
+    def "compile a basic typescript file"() {
+        when:
+        String compiledJs = processor.process(fileContent, mockAssetFile)
+
+        then:
+        compiledJs.contains('var Greeter')
+
+        where:
+        processor = new TypeScriptProcessor()
+
+        mockAssetFile = [ getName: {'foo.ts'}, getInputStream: { new ByteArrayInputStream(fileContent.bytes) } ] as GenericAssetFile
     }
 
 }
