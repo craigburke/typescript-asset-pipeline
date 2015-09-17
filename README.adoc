@@ -1,0 +1,37 @@
+:version: 0.1.0
+:apVersion: 2.5.0
+= TypeScript Asset-Pipeline
+
+The `typescript-asset-pipeline` is an https://github.com/bertramdev/asset-pipeline-core[Asset Pipeline] module that compiles TypeScript files.
+
+NOTE: This is currently a work in progress and will need more extensive testing before a proper 1.0 release.
+
+== Getting Started
+
+=== Gradle / Grails 3
+
+[source,groovy,subs='attributes']
+.build.gradle
+----
+plugins {
+  id 'com.bertramlabs.asset-pipeline' version '{apVersion}'
+}
+
+dependencies {
+  assets 'com.craigburke:typescript-asset-pipeline:{version}'
+}
+----
+
+=== Grails 2
+[source,groovy,subs='attributes']
+.BuildConfig.groovy
+----
+dependencies {
+  compile 'com.craigburke:typescript-asset-pipeline:{version}'
+}
+
+----
+
+== How it Works
+
+This plugin will compile any file with a `ts` extension into corresponding JavaScript. It also supports the use of declaration files (`d.ts`).
