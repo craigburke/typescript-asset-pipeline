@@ -5,7 +5,7 @@
 
 The `typescript-asset-pipeline` is an https://github.com/bertramdev/asset-pipeline-core[Asset Pipeline] module that compiles TypeScript files using v{tsVersion} of the compiler.
 
-NOTE: This is currently a work in progress and will need more extensive testing and better support for various compiler options, etc. *Until version 1.0, this should not be considered production ready.*
+NOTE: This is a work in progress and will need more extensive testing, performance improvements, etc. *Until version 1.0 it should not be considered production ready.*
 
 == Getting Started
 
