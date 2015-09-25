@@ -1,8 +1,9 @@
-:version: 0.1.1
+:version: 0.2.0
 :apVersion: 2.5.0
+:tscVersion: 1.6.2
 = TypeScript Asset-Pipeline
 
-The `typescript-asset-pipeline` is an https://github.com/bertramdev/asset-pipeline-core[Asset Pipeline] module that compiles TypeScript files.
+The `typescript-asset-pipeline` is an https://github.com/bertramdev/asset-pipeline-core[Asset Pipeline] module that compiles TypeScript files using v{1.6.2} of the compiler.
 
 NOTE: This is currently a work in progress and will need more extensive testing and better support for various compiler options before a proper 1.0 release.
 
@@ -38,16 +39,22 @@ This plugin will compile any file with a `.ts` extension into corresponding Java
 
 == Configuration
 
-You can set additional compiler options by setting the **compileOptions** property.
+You can set additional compiler options by setting the **typeScript** map.
 
 [source,groovy]
 .build.gradle
 ----
 assets {
-    configOptions = [
-        typeScript : [
-           compileOptions: ['--experimentalDecorators']
+    configOptions: [
+        typeScript: [
+           module:'commonjs' // <1>
+           target:'es5'
+           experimentalDecorators:true // <2>
         ]
     ]
 }
 ----
+<1> This translates to `--module commonjs`
+<2> Since a boolean is provided as the value, this is treated as a flag and translates to `--experimentalDecorators`
+
+See: https://github.com/Microsoft/TypeScript/wiki/Compiler-Options

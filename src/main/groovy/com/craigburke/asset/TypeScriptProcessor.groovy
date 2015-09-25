@@ -21,9 +21,6 @@ class TypeScriptProcessor extends JavaScriptProcessor {
     }
 
     String process(String input, AssetFile assetFile) {
-        List options = AssetPipelineConfigHolder.config?.typeScript?.compileOptions ?: []
-        String optionsValue = "[${options.collect {"'${it}'"}.join(',')}]"
-
         javaScript {
             getReferenceFiles(assetFile).each { String name, String data ->
                 eval "ts.addReferenceFile('${name}', '${data}');"
@@ -53,6 +50,21 @@ class TypeScriptProcessor extends JavaScriptProcessor {
         }
 
         references
+    }
+
+    static String getOptionsValue() {
+        List options = []
+        Map configOptions = AssetPipelineConfigHolder.config?.typeScript ?: [:]
+        configOptions.each { String key, value ->
+            String configKey = "--${key}"
+            if (value.getClass() != Boolean) {
+                options += [configKey, value]
+            }
+            else if (value) {
+                options += configKey
+            }
+        }
+        "[${options.collect {"'${it}'"}.join(',')}]"
     }
 
 }
