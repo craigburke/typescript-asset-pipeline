@@ -3,9 +3,9 @@
 :tscVersion: 1.6.2
 = TypeScript Asset-Pipeline
 
-The `typescript-asset-pipeline` is an https://github.com/bertramdev/asset-pipeline-core[Asset Pipeline] module that compiles TypeScript files using v{1.6.2} of the compiler.
+The `typescript-asset-pipeline` is an https://github.com/bertramdev/asset-pipeline-core[Asset Pipeline] module that compiles TypeScript files using v{tsVersion} of the compiler.
 
-NOTE: This is currently a work in progress and will need more extensive testing and better support for various compiler options before a proper 1.0 release.
+NOTE: This is a work in progress and will need more extensive testing, performance improvements, etc. *Until version 1.0 it should not be considered production ready.*
 
 == Getting Started
 
@@ -28,7 +28,7 @@ dependencies {
 .BuildConfig.groovy
 ----
 dependencies {
-    compile 'com.craigburke:typescript-asset-pipeline:{version}'
+    compile 'com.craigburke:typescript-asset-pipeline:{version}' 
 }
 
 ----
