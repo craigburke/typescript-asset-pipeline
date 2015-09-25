@@ -6,6 +6,7 @@ import asset.pipeline.AssetHelper
 import asset.pipeline.CacheManager
 import asset.pipeline.AssetPipelineConfigHolder
 import groovy.transform.Synchronized
+import org.mozilla.javascript.NativeArray
 
 class TypeScriptProcessor extends JavaScriptProcessor {
 
@@ -25,7 +26,7 @@ class TypeScriptProcessor extends JavaScriptProcessor {
             getReferenceFiles(assetFile).each { String name, String data ->
                 eval "ts.addReferenceFile('${name}', '${data}');"
             }
-            eval "ts.compile('${assetFile.name}', '${formatJavascriptAsString(input)}', ${optionsValue});"
+            eval "ts.compile('${assetFile.name}', '${formatJavascriptAsString(input)}');"
         }.replace('\\n', '\n')
     }
 
@@ -52,7 +53,7 @@ class TypeScriptProcessor extends JavaScriptProcessor {
         references
     }
 
-    static String getOptionsValue() {
+    static NativeArray getCompileOptions(String fileName) {
         List options = []
         Map configOptions = AssetPipelineConfigHolder.config?.typeScript ?: [:]
         configOptions.each { String key, value ->
@@ -64,7 +65,7 @@ class TypeScriptProcessor extends JavaScriptProcessor {
                 options += configKey
             }
         }
-        "[${options.collect {"'${it}'"}.join(',')}]"
+        options += fileName
     }
 
 }

@@ -59,9 +59,9 @@ task('installCompiler', dependsOn: 'processCompiler', type: NodeTask) {
     args = [updatedTscFile.path, '--output-library', 'ts', '--optimize-minimize', tscDestination.path]
     doFirst {
         String compileFunction = """ \
-            module.exports.compile = function(name, data, options) {
+            module.exports.compile = function(name, data) {
                 ts.sys.writeFile(name, data);
-                options.push(name);
+                var options = Packages.com.craigburke.asset.TypeScriptProcessor.getCompileOptions(name);
                 ts.executeCommandLine(options);
                 var jsFileName = name.substring(0, name.length - 2) + 'js';
                 return ts.sys.readFile(jsFileName);
