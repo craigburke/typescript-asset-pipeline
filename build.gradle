@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'com.craigburke'
-version = '0.2.0'
+version = '0.3.0'
 
 sourceCompatibility = 1.7
 
@@ -25,8 +25,9 @@ ext {
 
     tscPath = 'node_modules/typescript/lib/'
     tscFile = file("${tscPath}/tsc.js")
+    libDFile = file("${tscPath}/lib.d.ts")
     updatedTscFile = file("${tscPath}/tsc.tmp.js")
-    tscDestination = file('src/main/resources/tsc.js')
+    tscDestinationPath = file('src/main/resources/')
 }
 
 task('installCompilerDependencies', type: NpmTask) {
@@ -35,20 +36,10 @@ task('installCompilerDependencies', type: NpmTask) {
 
 task('processCompiler', dependsOn: 'installCompilerDependencies') {
     doLast {
-        String libDTs = file("${tscPath}/lib.d.ts").text
-            .replaceAll("'", "\\\\'")
-            .replaceAll("\r\n", " \\\\n")
-
-        // Copy files
         copy {
             from 'js'
             into tscPath
         }
-
-        // Update sys-shim
-        File sysShim = file("${tscPath}/sys-shim.js")
-        sysShim.text = sysShim.text.replace('// Add Files', "files['lib.d.ts'] = '${libDTs}';")
-
         String updatedJs = "ts.sys = require('./sys-shim');"
         updatedTscFile.text = tscFile.text.replaceFirst(/(?ms)ts\.sys.*\}\)\(\);/, updatedJs)
     }
@@ -56,22 +47,21 @@ task('processCompiler', dependsOn: 'installCompilerDependencies') {
 
 task('installCompiler', dependsOn: 'processCompiler', type: NodeTask) {
     script = file('node_modules/webpack/bin/webpack.js')
-    args = [updatedTscFile.path, '--output-library', 'ts', '--optimize-minimize', tscDestination.path]
+    args = [updatedTscFile.path, '--output-library', 'ts', '--optimize-minimize', "${tscDestinationPath.path}/tsc.js"]
     doFirst {
         String compileFunction = """ \
-            module.exports.compile = function(name, data) {
-                ts.sys.writeFile(name, data);
+            module.exports.compile = function(name) {
                 var options = Packages.com.craigburke.asset.TypeScriptProcessor.getCompileOptions(name);
                 ts.executeCommandLine(options);
-                var jsFileName = name.substring(0, name.length - 2) + 'js';
-                return ts.sys.readFile(jsFileName);
-            };
-            module.exports.addReferenceFile = function(name, data) {
-                ts.sys.writeFile(name, data);
             };
         """
-
         updatedTscFile.text =  updatedTscFile.text.replace('ts.executeCommandLine(ts.sys.args);', compileFunction)
+    }
+    doLast {
+        copy {
+            from libDFile
+            into tscDestinationPath
+        }
     }
 }
 
@@ -139,7 +129,7 @@ publishing {
 
 dependencies {
     provided 'com.bertramlabs.plugins:asset-pipeline-core:2.0.12'
-    compile 'com.craigburke.asset:javascript-core:0.2.1'
-    compile 'org.codehaus.groovy:groovy-all:2.4.4'
+    compile 'com.craigburke.asset:javascript-core:0.2.4'
+    provided 'org.codehaus.groovy:groovy-all:2.0.8'
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
 }

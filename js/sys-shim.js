@@ -1,31 +1,23 @@
 module.exports = (function() {
-    var files = {};
-    // Add Files
     return {
         args: [],
-        newLine: '\\n',
+        newLine: '\n',
         useCaseSensitiveFileNames: false,
         write: function(s) {
             java.lang.System.out.println(s);
         },
         readFile: function(fileName) {
-            return files[fileName];
+            return String(Packages.com.craigburke.asset.TypeScriptProcessor.getFileContents(fileName));
         },
         writeFile: function(fileName, data) {
-            files[fileName] = data;
+            Packages.com.craigburke.asset.TypeScriptProcessor.setResult(data);
         },
-        resolvePath: function(path) {
-            return '/foo';
-        },
-        fileExists: function(path) { return false; },
-        directoryExists: function(path) { return false; },
+        resolvePath: function(path) { return path; },
+        fileExists: function(path) { return true; },
+        directoryExists: function(path) { return true; },
         createDirectory: function(directoryName) { },
-        getExecutingFilePath: function() {
-            return 'foo';
-        },
-        getCurrentDirectory: function() {
-            return '';
-        },
+        getExecutingFilePath: function() { return ''; },
+        getCurrentDirectory: function() { return ''; },
         readDirectory: function() { },
         exit: function(exitCode) { }
     }

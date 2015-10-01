@@ -8,8 +8,4 @@ class TypeScriptAssetFile extends AbstractAssetFile {
     static final String compiledExtension = 'js'
 
     static processors = [TypeScriptProcessor]
-
-    static String directiveForLine(String line) {
-        return null
-    }
 }

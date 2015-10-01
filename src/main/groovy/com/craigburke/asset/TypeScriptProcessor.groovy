@@ -7,8 +7,10 @@ import asset.pipeline.CacheManager
 import asset.pipeline.AssetPipelineConfigHolder
 import groovy.transform.Synchronized
 import org.mozilla.javascript.NativeArray
+import org.mozilla.javascript.NativeString
 
 class TypeScriptProcessor extends JavaScriptProcessor {
+    static ThreadLocal<TypeScriptCompileState> localCompileState = new ThreadLocal<TypeScriptCompileState>()
 
     TypeScriptProcessor(AssetCompiler precompiler) {
         super(precompiler)
@@ -22,38 +24,46 @@ class TypeScriptProcessor extends JavaScriptProcessor {
     }
 
     String process(String input, AssetFile assetFile) {
+        localCompileState.set(new TypeScriptCompileState(baseAsset: assetFile))
+
         javaScript {
-            getReferenceFiles(assetFile).each { String name, String data ->
-                eval "ts.addReferenceFile('${name}', '${data}');"
-            }
-            eval "ts.compile('${assetFile.name}', '${formatJavascriptAsString(input)}');"
-        }.replace('\\n', '\n')
-    }
-
-    static String formatJavascriptAsString(String value) {
-        value.replace("'", "\\'").replaceAll("(\r)?\n", " \\\\n")
-    }
-
-    static Map getReferenceFiles(AssetFile assetFile, AssetFile baseFile = null) {
-        Map references = [:]
-        baseFile = baseFile ?: assetFile
-
-        assetFile.inputStream.text.findAll(~/reference path=\s*"(.+?)"/) { String fullMatch, String value ->
-            String path = AssetHelper.normalizePath("${assetFile.parentPath ?: ''}/${value}") - baseFile.path
-            path = path.startsWith('/') ? path.substring(1) : path
-
-            AssetFile referenceFile = AssetHelper.fileForFullName(path)
-            if (referenceFile) {
-                references[path] = formatJavascriptAsString(referenceFile.inputStream.text)
-                references << getReferenceFiles(referenceFile, baseFile)
-                CacheManager.addCacheDependency(baseFile.path, referenceFile)
-            }
+            tsFile = assetFile.name
+            eval 'ts.compile(tsFile);'
         }
 
-        references
+        result
     }
 
-    static NativeArray getCompileOptions(String fileName) {
+    static String getFileContents(String filePath) {
+        TypeScriptCompileState compileState = getLocalCompileState().get()
+
+        if (filePath == 'lib.d.ts') {
+            TypeScriptProcessor.classLoader.getResource('lib.d.ts').text
+        }
+        else if (filePath == compileState.baseAsset.name) {
+            compileState.baseAsset.inputStream.text
+        }
+        else {
+            String assetPath = AssetHelper.normalizePath("${compileState.baseAsset.parentPath}/${filePath}")
+            AssetFile referenceFile = AssetHelper.fileForFullName(assetPath)
+
+            if (referenceFile) {
+                CacheManager.addCacheDependency(compileState.baseAsset.path, referenceFile)
+            }
+
+            referenceFile?.inputStream?.text ?: ''
+        }
+    }
+
+    static void setResult(String result) {
+        localCompileState.get().result = result
+    }
+
+    static String getResult() {
+        localCompileState.get().result
+    }
+
+    static NativeArray getCompileOptions(String name) {
         List options = []
         Map configOptions = AssetPipelineConfigHolder.config?.typeScript ?: [:]
         configOptions.each { String key, value ->
@@ -65,7 +75,7 @@ class TypeScriptProcessor extends JavaScriptProcessor {
                 options += configKey
             }
         }
-        options += fileName
+        options += name
     }
 
 }
