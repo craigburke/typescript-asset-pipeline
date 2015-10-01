@@ -3,7 +3,7 @@
 :tscVersion: 1.6.2
 = TypeScript Asset-Pipeline
 
-The `typescript-asset-pipeline` is an https://github.com/bertramdev/asset-pipeline-core[Asset Pipeline] module that compiles TypeScript files using v{tsVersion} of the compiler.
+The `typescript-asset-pipeline` is an https://github.com/bertramdev/asset-pipeline-core[Asset Pipeline] module that compiles TypeScript files using v{tscVersion} of the compiler.
 
 NOTE: This is a work in progress and will need more extensive testing, performance improvements, etc. *Until version 1.0 it should not be considered production ready.*
 
