@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'com.craigburke'
-version = '0.3.0'
+version = '0.4.0'
 
 sourceCompatibility = 1.7
 
@@ -37,7 +37,7 @@ task('installCompilerDependencies', type: NpmTask) {
 task('processCompiler', dependsOn: 'installCompilerDependencies') {
     doLast {
         copy {
-            from 'js'
+            from 'src/main/javascript'
             into tscPath
         }
         String updatedJs = "ts.sys = require('./sys-shim');"

@@ -7,7 +7,6 @@ import asset.pipeline.CacheManager
 import asset.pipeline.AssetPipelineConfigHolder
 import groovy.transform.Synchronized
 import org.mozilla.javascript.NativeArray
-import org.mozilla.javascript.NativeString
 
 class TypeScriptProcessor extends JavaScriptProcessor {
     static ThreadLocal<TypeScriptCompileState> localCompileState = new ThreadLocal<TypeScriptCompileState>()
