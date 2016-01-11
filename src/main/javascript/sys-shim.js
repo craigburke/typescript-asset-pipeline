@@ -1,4 +1,7 @@
 module.exports = (function() {
+
+    var TypeScriptProcessor = Java.type('com.craigburke.asset.TypeScriptProcessor');
+
     return {
         args: [],
         newLine: '\n',
@@ -7,10 +10,10 @@ module.exports = (function() {
             java.lang.System.out.println(s);
         },
         readFile: function(fileName) {
-            return String(Packages.com.craigburke.asset.TypeScriptProcessor.getFileContents(fileName));
+            return TypeScriptProcessor.readFile(fileName);
         },
         writeFile: function(fileName, data) {
-            Packages.com.craigburke.asset.TypeScriptProcessor.setResult(data);
+            TypeScriptProcessor.writeFile(fileName, data);
         },
         resolvePath: function(path) { return path; },
         fileExists: function(path) { return true; },

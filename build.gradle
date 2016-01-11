@@ -9,7 +9,7 @@ plugins {
 group = 'com.craigburke'
 version = '0.4.0'
 
-sourceCompatibility = 1.7
+sourceCompatibility = 1.8
 
 repositories {
     mavenLocal()
@@ -49,12 +49,7 @@ task('installCompiler', dependsOn: 'processCompiler', type: NodeTask) {
     script = file('node_modules/webpack/bin/webpack.js')
     args = [updatedTscFile.path, '--output-library', 'tsc', '--optimize-minimize', "${tscDestinationPath.path}/tsc.js"]
     doFirst {
-        String compileFunction = """ \
-            module.exports = function(name) {
-                var options = Packages.com.craigburke.asset.TypeScriptProcessor.getCompileOptions(name);
-                ts.executeCommandLine(options);
-            };
-        """
+        String compileFunction = "module.exports = ts.executeCommandLine;"
         updatedTscFile.text =  updatedTscFile.text.replace('ts.executeCommandLine(ts.sys.args);', compileFunction)
     }
     doLast {
@@ -129,7 +124,6 @@ publishing {
 
 dependencies {
     provided 'com.bertramlabs.plugins:asset-pipeline-core:2.0.12'
-    compile 'com.craigburke.asset:javascript-core:0.2.4'
-    provided 'org.codehaus.groovy:groovy-all:2.0.8'
-    testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
+    provided 'org.codehaus.groovy:groovy-all:2.4.5'
+    testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
 }
