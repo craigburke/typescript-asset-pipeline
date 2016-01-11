@@ -47,10 +47,10 @@ task('processCompiler', dependsOn: 'installCompilerDependencies') {
 
 task('installCompiler', dependsOn: 'processCompiler', type: NodeTask) {
     script = file('node_modules/webpack/bin/webpack.js')
-    args = [updatedTscFile.path, '--output-library', 'ts', '--optimize-minimize', "${tscDestinationPath.path}/tsc.js"]
+    args = [updatedTscFile.path, '--output-library', 'tsc', '--optimize-minimize', "${tscDestinationPath.path}/tsc.js"]
     doFirst {
         String compileFunction = """ \
-            module.exports.compile = function(name) {
+            module.exports = function(name) {
                 var options = Packages.com.craigburke.asset.TypeScriptProcessor.getCompileOptions(name);
                 ts.executeCommandLine(options);
             };

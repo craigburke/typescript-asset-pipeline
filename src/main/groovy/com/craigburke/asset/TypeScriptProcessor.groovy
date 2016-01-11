@@ -27,7 +27,7 @@ class TypeScriptProcessor extends JavaScriptProcessor {
 
         javaScript {
             tsFile = assetFile.name
-            eval 'ts.compile(tsFile);'
+            eval 'tsc(tsFile);'
         }
 
         result
