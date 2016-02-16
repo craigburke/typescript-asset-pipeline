@@ -27,7 +27,7 @@ class TypeScriptProcessor extends AbstractProcessor {
     static initialize() {
         if (!engine) {
             ScriptEngineManager engineManager =  new ScriptEngineManager()
-            ScriptEngine jsEngine = engineManager.getEngineByName("nashorn")
+            ScriptEngine jsEngine = engineManager.getEngineByName("javascript")
             URL tsc = TypeScriptProcessor.classLoader.getResource('tsc.js')
             jsEngine.eval(tsc.text)
             engine = (Invocable)jsEngine

@@ -9,7 +9,7 @@ plugins {
 group = 'com.craigburke'
 version = '0.4.0'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 1.7
 
 repositories {
     mavenLocal()
@@ -54,8 +54,11 @@ task('installCompiler', dependsOn: 'processCompiler', type: NodeTask) {
     }
     doLast {
         copy {
-            from libDFile
+            from libDFile, updatedTscFile
             into tscDestinationPath
+            rename { String fileName ->
+                fileName.replace('.tmp', '')
+            }
         }
     }
 }
