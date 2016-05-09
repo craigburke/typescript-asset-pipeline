@@ -42,23 +42,19 @@ task('processCompiler', dependsOn: 'installCompilerDependencies') {
         }
         String updatedJs = "ts.sys = require('./sys-shim');"
         updatedTscFile.text = tscFile.text.replaceFirst(/(?ms)ts\.sys.*\}\)\(\);/, updatedJs)
+
+        String compileFunction = "module.exports = ts.executeCommandLine;"
+        updatedTscFile.text = updatedTscFile.text.replaceFirst(/ts\.executeCommandLine\(ts\.sys\.args\);/, compileFunction)
     }
 }
 
 task('installCompiler', dependsOn: 'processCompiler', type: NodeTask) {
     script = file('node_modules/webpack/bin/webpack.js')
     args = [updatedTscFile.path, '--output-library', 'tsc', '--optimize-minimize', "${tscDestinationPath.path}/tsc.js"]
-    doFirst {
-        String compileFunction = "module.exports = ts.executeCommandLine;"
-        updatedTscFile.text =  updatedTscFile.text.replace('ts.executeCommandLine(ts.sys.args);', compileFunction)
-    }
     doLast {
         copy {
-            from libDFile, updatedTscFile
+            from libDFile
             into tscDestinationPath
-            rename { String fileName ->
-                fileName.replace('.tmp', '')
-            }
         }
     }
 }
